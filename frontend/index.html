@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood Prediction System - Assam Brahmaputra Basin</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-water"></i>
+                    <h1>Flood Prediction System</h1>
+                </div>
+                <p class="subtitle">Assam - Brahmaputra River Basin</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Form Section -->
+            <section class="input-section card">
+                <h2><i class="fas fa-map-marker-alt"></i> Location & Date</h2>
+                <form id="predictionForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="latitude">
+                                <i class="fas fa-globe"></i> Latitude
+                            </label>
+                            <input 
+                                type="number" 
+                                id="latitude" 
+                                name="latitude" 
+                                step="0.0001" 
+                                placeholder="26.1865"
+                                required
+                                min="24.0"
+                                max="28.0"
+                            >
+                            <small>Range: 24.0° to 28.0° (Assam region)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="longitude">
+                                <i class="fas fa-globe"></i> Longitude
+                            </label>
+                            <input 
+                                type="number" 
+                                id="longitude" 
+                                name="longitude" 
+                                step="0.0001" 
+                                placeholder="91.7439"
+                                required
+                                min="89.0"
+                                max="96.0"
+                            >
+                            <small>Range: 89.0° to 96.0° (Assam region)</small>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="date">
+                                <i class="fas fa-calendar-alt"></i> Date
+                            </label>
+                            <input 
+                                type="date" 
+                                id="date" 
+                                name="date" 
+                                required
+                            >
+                            <small>Select the date for flood risk prediction</small>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="fas fa-search"></i> Predict Flood Risk
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="clearBtn">
+                            <i class="fas fa-redo"></i> Clear
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Analyzing location and extracting GIS features...</p>
+                <small>This may take 30-60 seconds</small>
+            </div>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section hidden">
+                <!-- Prediction Card -->
+                <div class="card prediction-card">
+                    <h2><i class="fas fa-chart-line"></i> Flood Risk Prediction</h2>
+                    <div class="prediction-content">
+                        <div class="risk-indicator" id="riskIndicator">
+                            <div class="risk-level" id="riskLevel">-</div>
+                            <div class="risk-probability" id="riskProbability">-</div>
+                        </div>
+                        <p class="risk-interpretation" id="riskInterpretation"></p>
+                    </div>
+                </div>
+
+                <!-- Features Card -->
+                <div class="card features-card">
+                    <h2><i class="fas fa-layer-group"></i> Extracted Features</h2>
+                    <div class="features-grid" id="featuresGrid">
+                        <!-- Features will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Map Preview -->
+                <div class="card map-card">
+                    <h2><i class="fas fa-map"></i> Location Preview</h2>
+                    <div class="map-container">
+                        <div id="mapPreview" class="map-preview">
+                            <p><i class="fas fa-map-marked-alt"></i></p>
+                            <p id="locationText">Lat: -, Lon: -</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <div id="errorSection" class="error-section hidden">
+                <div class="card error-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error</h3>
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Flood Prediction System using Python, Google Earth Engine & NASA APIs</p>
+            <p class="footer-links">
+                <span>Powered by:</span>
+                <span>NASA POWER</span> • 
+                <span>Google Earth Engine</span> • 
+                <span>SRTM</span> • 
+                <span>Sentinel-2</span>
+            </p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
