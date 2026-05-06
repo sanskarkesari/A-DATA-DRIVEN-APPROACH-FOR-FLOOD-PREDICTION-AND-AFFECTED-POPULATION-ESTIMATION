@@ -1,4 +1,4 @@
-# Flood Prediction System for India - Assam Brahmaputra River Basin
+# A DATA‑DRIVEN APPROACH FOR FLOOD PREDICTION AND AFFECTED POPULATION ESTIMATION
 
 A comprehensive flood risk prediction system using **Python, Google Earth Engine, and NASA free GIS APIs** for real-time flood risk assessment.
 
