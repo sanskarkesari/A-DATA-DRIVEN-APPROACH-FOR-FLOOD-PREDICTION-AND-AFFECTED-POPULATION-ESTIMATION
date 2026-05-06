@@ -52,9 +52,16 @@ FLOOD_RISK_THRESHOLDS = {
     'high': 1.0
 }
 
-# Model file path
+# Model file paths (Flood Risk Classification)
 MODEL_PATH = "models/flood_prediction_model.pkl"
 SCALER_PATH = "models/feature_scaler.pkl"
+
+# New model file paths (Affected Population Regression)
+# These are used by the population impact module and are completely
+# separate from the flood risk classification model above.
+AFFECTED_POP_MODEL_PATH = "models/affected_population_model.pkl"
+AFFECTED_POP_PREPROCESSOR_PATH = "models/affected_population_preprocessor.pkl"
+AFFECTED_POP_META_PATH = "models/affected_population_meta.json"
 
 # Flask API Configuration
 API_HOST = "0.0.0.0"

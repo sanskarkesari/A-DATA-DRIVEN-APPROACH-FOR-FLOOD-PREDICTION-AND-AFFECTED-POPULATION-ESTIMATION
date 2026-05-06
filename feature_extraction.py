@@ -16,7 +16,7 @@ import requests
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 import time
 import json
 import warnings
@@ -24,6 +24,36 @@ import config
 
 # Suppress Earth Engine deprecation warnings to prevent Flask auto-reload issues
 warnings.filterwarnings('ignore', category=DeprecationWarning, module='ee')
+
+
+def _rainfall_stats_from_prectot_series(rainfall_mm: pd.Series) -> Tuple[float, float, float]:
+    """
+    Derive daily, 30-day cumulative, and mean daily rainfall from PRECTOTCORR.
+
+    NASA POWER uses negative sentinels (commonly -999) for missing/invalid values.
+    Precipitation in mm cannot be negative; we treat negatives as missing.
+    """
+    if rainfall_mm.empty:
+        return (0.0, 0.0, 0.0)
+
+    valid = rainfall_mm.where(rainfall_mm >= 0.0)
+
+    # Latest calendar day: use last valid value if the most recent day is missing (e.g. lag / -999)
+    last = valid.iloc[-1]
+    if pd.notna(last):
+        daily = float(last)
+    else:
+        prev = valid.dropna()
+        daily = float(prev.iloc[-1]) if len(prev) else 0.0
+
+    tail = valid.iloc[-30:]
+    cum = tail.sum(skipna=True)
+    cumulative = float(cum) if pd.notna(cum) else 0.0
+
+    mean_val = valid.mean(skipna=True)
+    avg = float(mean_val) if pd.notna(mean_val) else 0.0
+
+    return (daily, cumulative, avg)
 
 # Initialize Google Earth Engine with safe fallback
 try:
@@ -101,18 +131,16 @@ class FeatureExtractor:
                     'date': dates,
                     'rainfall_mm': rainfall_values
                 })
-                
-                # Calculate cumulative rainfall (30-day window)
-                df['cumulative_rainfall_30d'] = df['rainfall_mm'].rolling(window=30, min_periods=1).sum()
-                
-                # Get latest values
-                latest_rainfall = df['rainfall_mm'].iloc[-1] if len(df) > 0 else 0.0
-                cumulative_rainfall = df['cumulative_rainfall_30d'].iloc[-1] if len(df) > 0 else 0.0
-                
+                df = df.sort_values('date').reset_index(drop=True)
+
+                latest_rainfall, cumulative_rainfall, avg_daily = _rainfall_stats_from_prectot_series(
+                    df['rainfall_mm']
+                )
+
                 return {
                     'daily_rainfall_mm': round(latest_rainfall, 2),
                     'cumulative_rainfall_30d_mm': round(cumulative_rainfall, 2),
-                    'avg_daily_rainfall_mm': round(df['rainfall_mm'].mean(), 2)
+                    'avg_daily_rainfall_mm': round(avg_daily, 2)
                 }
             
             return {

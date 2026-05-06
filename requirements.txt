@@ -23,5 +23,12 @@ shapely==2.0.2
 python-dotenv==1.0.0
 joblib==1.3.2
 
+# Plotting (for plot_model_performance.py)
+matplotlib>=3.5.0
+seaborn>=0.12.0
+
+# Maps (for district-wise risk map)
+folium>=0.15.0
+
 
 

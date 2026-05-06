@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flood Prediction System - Assam Brahmaputra Basin</title>
+    <title>Flood & Affected Population Prediction System - Assam Brahmaputra Basin</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,7 +15,7 @@
             <div class="header-content">
                 <div class="logo">
                     <i class="fas fa-water"></i>
-                    <h1>Flood Prediction System</h1>
+                    <h1>Flood & Affected Population Prediction</h1>
                 </div>
                 <p class="subtitle">Assam - Brahmaputra River Basin</p>
             </div>
@@ -76,9 +76,70 @@
                         </div>
                     </div>
 
+                    <!-- Optional Population Impact Inputs -->
+                    <div class="population-inputs">
+                        <h3><i class="fas fa-users"></i> Population Impact</h3>
+                        <p class="help-text">
+                            Provide these details to estimate affected population. If left empty,
+                            only flood risk will be predicted.
+                        </p>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="district">
+                                    <i class="fas fa-city"></i> District
+                                </label>
+                                <div class="select-wrapper">
+                                    <select id="district" name="district" class="styled-select">
+                                        <option value="">Select a district...</option>
+                                        <option value="Morigaon">  Morigaon</option>
+                                        <option value="Dhubri">  Dhubri</option>
+                                        <option value="Kamrup">  Kamrup</option>
+                                        <option value="Sonitpur">  Sonitpur</option>
+                                        <option value="Jorhat">  Jorhat</option>
+                                        <option value="Lakhimpur">  Lakhimpur</option>
+                                        <option value="Darrang">  Darrang</option>
+                                        <option value="Barpeta">  Barpeta</option>
+                                        <option value="Nagaon">  Nagaon</option>
+                                        <option value="Nalbari">  Nalbari</option>
+                                    </select>
+                                    <i class="fas fa-chevron-down select-arrow"></i>
+                                </div>
+                                <small>Select district for population impact estimation</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="riverLevel">
+                                    <i class="fas fa-water"></i> River Water Level (m)
+                                </label>
+                                <input
+                                    type="number"
+                                    id="riverLevel"
+                                    name="riverLevel"
+                                    step="0.01"
+                                    placeholder="e.g. 10.5"
+                                >
+                                <small>Current/forecast river water level in meters</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="populationDensity">
+                                    <i class="fas fa-users"></i> Population Density (per sq. km)
+                                </label>
+                                <input
+                                    type="number"
+                                    id="populationDensity"
+                                    name="populationDensity"
+                                    step="1"
+                                    placeholder="e.g. 1200"
+                                >
+                                <small>District population density (people per sq. km)</small>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary" id="submitBtn">
-                            <i class="fas fa-search"></i> Predict Flood Risk
+                            <i class="fas fa-search"></i> Predict Flood & Population Impact
                         </button>
                         <button type="button" class="btn btn-secondary" id="clearBtn">
                             <i class="fas fa-redo"></i> Clear
@@ -116,6 +177,54 @@
                     </div>
                 </div>
 
+                <!-- Affected Population Card -->
+                <div class="card population-card" id="populationCard" style="display: none;">
+                    <h2><i class="fas fa-users"></i> Estimated Population Affected</h2>
+                    <div class="population-content">
+                        <div class="population-value-wrapper">
+                            <div class="population-value" id="affectedPopulationValue">-</div>
+                            <div class="population-label">People</div>
+                            <div class="population-range" id="affectedPopulationRange">-</div>
+                        </div>
+                        <div class="population-visualization">
+                            <div class="population-bar-container">
+                                <div class="population-bar-label">
+                                    <span>Impact Scale</span>
+                                    <span id="populationBarLabel">0%</span>
+                                </div>
+                                <div class="population-bar">
+                                    <div class="population-bar-fill" id="affectedPopulationBar"></div>
+                                </div>
+                            </div>
+                            <div class="population-gauge" id="populationGauge">
+                                <svg viewBox="0 0 200 120" class="gauge-svg">
+                                    <path class="gauge-background" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#e2e8f0" stroke-width="12"/>
+                                    <path class="gauge-fill" id="gaugeFill" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#10b981" stroke-width="12" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+                                    <text x="100" y="90" text-anchor="middle" class="gauge-text" id="gaugeText">0%</text>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="population-context" id="affectedPopulationContext">
+                            Provide district, river level, and population density to estimate affected population.
+                        </p>
+
+                        <!-- Inline district-wise flood risk map (shown after population prediction) -->
+                        <div class="district-map-wrapper" id="districtMapWrapper" style="display:none;">
+                            <h3 class="district-map-title"><i class="fas fa-map-marked-alt"></i> District Risk Map</h3>
+                            <iframe
+                                id="districtRiskMapFrame"
+                                class="district-risk-map-frame"
+                                title="District Flood Risk Map"
+                                loading="lazy"
+                                referrerpolicy="no-referrer"
+                            ></iframe>
+                            <p class="district-map-note">
+                                Map shows flood risk marker for the selected district.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Map Preview -->
                 <div class="card map-card">
                     <h2><i class="fas fa-map"></i> Location Preview</h2>
@@ -140,7 +249,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Flood Prediction System using Python, Google Earth Engine & NASA APIs</p>
+            <p>Flood & Affected Population Prediction System using Python, Google Earth Engine & NASA APIs</p>
             <p class="footer-links">
                 <span>Powered by:</span>
                 <span>NASA POWER</span> • 
